@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>SEB — Spending Pause</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --seb: #0C2340;
+      --seb-mid: #163352;
+      --seb-light: #EAF0F7;
+      --seb-accent: #00A878;
+      --seb-warn: #E8600A;
+      --seb-warn-bg: #FFF3EE;
+      --seb-warn-border: #FDDCC8;
+      --r: 16px;
+      --r-sm: 10px;
+    }
+
+    html, body {
+      height: 100%;
+      background: #D8DCE4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .phone {
+      width: 375px;
+      min-height: 720px;
+      background: #F2F4F7;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,0,0,0.12);
+    }
+
+    /* ── Status bar ── */
+    .statusbar {
+      background: var(--seb);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 22px 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+    }
+    .statusbar-time { font-size: 14px; font-weight: 600; }
+    .statusbar-icons { display: flex; gap: 5px; align-items: center; }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: var(--seb);
+      padding: 10px 20px 14px;
+      display: flex;
+      align-items: center;
+    }
+    .topbar-logo { color: #fff; font-size: 20px; font-weight: 700; letter-spacing: 0.05em; }
+    .topbar-account {
+      margin-left: auto;
+      text-align: right;
+    }
+    .topbar-name { color: rgba(255,255,255,0.6); font-size: 11px; }
+    .topbar-card { color: rgba(255,255,255,0.9); font-size: 12px; font-weight: 500; margin-top: 1px; }
+
+    /* ── Checkout background ── */
+    .checkout-bg {
+      padding: 14px 14px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      filter: blur(2.5px);
+      opacity: 0.4;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .shop-header {
+      background: #fff;
+      border-radius: var(--r);
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .shop-logo {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: var(--seb-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .shop-name { font-size: 15px; font-weight: 600; color: #111; }
+    .shop-url { font-size: 11px; color: #999; margin-top: 2px; }
+
+    .cart-card {
+      background: #fff;
+      border-radius: var(--r);
+      padding: 14px;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 0;
+      border-bottom: 0.5px solid #eee;
+    }
+    .cart-item:last-of-type { border-bottom: none; }
+    .item-img {
+      width: 46px; height: 46px;
+      border-radius: 8px;
+      background: #f5f5f5;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .item-name { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+    .item-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+    .item-price { margin-left: auto; font-size: 14px; font-weight: 600; color: #1a1a1a; }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: #111;
+    }
+    .pay-btn {
+      background: var(--seb);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      width: 100%;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      margin-top: 10px;
+    }
+
+    /* ── Overlay ── */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 18, 38, 0.6);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ── Bottom sheet ── */
+    .sheet {
+      background: #fff;
+      border-radius: 22px 22px 0 0;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 16px));
+      animation: slideUp 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+
+    .pill {
+      width: 36px; height: 4px;
+      background: #DEDEDE;
+      border-radius: 2px;
+      margin: 12px auto 0;
+    }
+
+    .sheet-inner { padding: 0 18px; }
+
+    /* alert header */
+    .alert-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 18px 0 14px;
+    }
+    .alert-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: var(--seb-warn-bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .alert-title { font-size: 16px; font-weight: 600; color: #111; line-height: 1.3; }
+    .alert-title .amount { color: var(--seb-warn); }
+    .alert-sub { font-size: 13px; color: #888; margin-top: 3px; line-height: 1.4; }
+
+    /* context strip */
+    .context-strip {
+      background: var(--seb-warn-bg);
+      border: 1px solid var(--seb-warn-border);
+      border-radius: var(--r-sm);
+      padding: 13px 14px;
+      margin-bottom: 12px;
+    }
+    .context-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+    }
+    .context-row:first-child { padding-top: 0; }
+    .context-row.divider {
+      border-top: 0.5px solid var(--seb-warn-border);
+      margin-top: 6px;
+      padding-top: 10px;
+    }
+    .ctx-label { font-size: 12px; color: #9a5528; }
+    .ctx-val { font-size: 13px; font-weight: 600; color: #7a3b18; }
+    .ctx-val.warn { font-size: 13px; font-weight: 600; color: #7a3b18; }
+    .ctx-val.warn .over { color: var(--seb-warn); }
+
+    /* insight */
+    .insight-card {
+      background: #EDF1F7;
+      border: 1px solid #D6DEE9;
+      border-radius: var(--r-sm);
+      padding: 11px 13px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+    }
+    .insight-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #7A92AA;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .insight-text { font-size: 12.5px; color: #4A6070; line-height: 1.55; }
+    .insight-text strong { font-weight: 600; color: #2E4A5E; }
+
+    /* savings tip */
+    .savings-tip {
+      background: #EBF8F3;
+      border-radius: var(--r-sm);
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: #1a6644;
+      line-height: 1.55;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .tip-icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* actions */
+    .btn-pause {
+      background: var(--seb);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      width: 100%;
+      min-height: 52px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .btn-pause:active { opacity: 0.82; }
+
+    .btn-proceed {
+      background: transparent;
+      color: #999;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 15px;
+      width: 100%;
+      min-height: 52px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: block;
+    }
+    .btn-proceed:active { background: #f5f5f5; }
+
+    /* paused state */
+    .paused-state {
+      display: none;
+      text-align: center;
+      padding: 28px 20px 10px;
+    }
+    .paused-icon {
+      width: 64px; height: 64px;
+      border-radius: 20px;
+      background: #EBF8F3;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .paused-title { font-size: 18px; font-weight: 600; color: #111; margin-bottom: 8px; }
+    .paused-sub {
+      font-size: 14px;
+      color: #777;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .remind-btn {
+      background: var(--seb);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      width: 100%;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .dismiss-btn {
+      background: transparent;
+      color: #bbb;
+      border: none;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      padding: 6px;
+      display: block;
+      width: 100%;
+    }
+
+    /* desktop centering note */
+    @media (max-width: 420px) {
+      html, body { align-items: flex-start; background: #fff; }
+      .phone { border-radius: 0; box-shadow: none; min-height: 100vh; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+
+  <div class="statusbar">
+    <span class="statusbar-time">01:14</span>
+    <div class="statusbar-icons">
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+        <rect x="0" y="4" width="3" height="7" rx="1" fill="rgba(255,255,255,0.5)"/>
+        <rect x="4.5" y="2.5" width="3" height="8.5" rx="1" fill="rgba(255,255,255,0.65)"/>
+        <rect x="9" y="1" width="3" height="10" rx="1" fill="rgba(255,255,255,0.8)"/>
+        <rect x="13.5" y="0" width="2.5" height="11" rx="1" fill="white"/>
+      </svg>
+      <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
+        <path d="M7.5 2.5C9.4 2.5 11.1 3.3 12.3 4.6L13.7 3.1C12.1 1.4 9.9 0.4 7.5 0.4 5.1 0.4 2.9 1.4 1.3 3.1L2.7 4.6C3.9 3.3 5.6 2.5 7.5 2.5Z" fill="white"/>
+        <path d="M7.5 5.1C8.8 5.1 9.9 5.6 10.7 6.5L12.1 5C10.9 3.8 9.3 3 7.5 3 5.7 3 4.1 3.8 2.9 5L4.3 6.5C5.1 5.6 6.2 5.1 7.5 5.1Z" fill="white" opacity="0.8"/>
+        <circle cx="7.5" cy="9" r="1.5" fill="white"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="rgba(255,255,255,0.4)"/>
+        <rect x="2" y="2" width="16" height="8" rx="2" fill="white"/>
+        <path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="rgba(255,255,255,0.5)"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div class="topbar-logo">SEB</div>
+    <div class="topbar-account">
+      <div class="topbar-name">Matas Paulauskas</div>
+      <div class="topbar-card">Visa ****4821</div>
+    </div>
+  </div>
+
+  <!-- Blurred checkout -->
+  <div class="checkout-bg">
+    <div class="shop-header">
+      <div class="shop-logo">🛍</div>
+      <div>
+        <div class="shop-name">ASOS</div>
+        <div class="shop-url">asos.com · Secure checkout</div>
+      </div>
+    </div>
+    <div class="cart-card">
+      <div class="cart-item">
+        <div class="item-img">👕</div>
+        <div>
+          <div class="item-name">Oversized graphic tee</div>
+          <div class="item-sub">Size M · Black</div>
+        </div>
+        <div class="item-price">€13.99</div>
+      </div>
+      <div class="cart-item">
+        <div class="item-img">🧢</div>
+        <div>
+          <div class="item-name">Carhartt cap</div>
+          <div class="item-sub">One size · Beige</div>
+        </div>
+        <div class="item-price">€24.91</div>
+      </div>
+      <div class="total-row">
+        <span>Total</span>
+        <span>€38.90</span>
+      </div>
+      <button class="pay-btn">Pay €38.90</button>
+    </div>
+  </div>
+
+  <!-- SEB Overlay -->
+  <div class="overlay" id="overlay">
+    <div class="sheet">
+      <div class="pill"></div>
+
+      <!-- Main alert view -->
+      <div id="main-sheet">
+        <div class="sheet-inner">
+
+          <div class="alert-header">
+            <div class="alert-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M12 9v4M12 16.5v.5" stroke="#E8600A" stroke-width="2" stroke-linecap="round"/>
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="#E8600A" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="alert-title">Before you pay <span class="amount">€38.90</span></div>
+              <div class="alert-sub">SEB noticed a spending pattern.</div>
+            </div>
+          </div>
+
+          <div class="context-strip">
+            <div class="context-row">
+              <span class="ctx-label">Clothing this month</span>
+              <span class="ctx-val">€142.90 spent</span>
+            </div>
+            <div class="context-row">
+              <span class="ctx-label">Monthly clothing limit</span>
+              <span class="ctx-val">€150.00 set</span>
+            </div>
+            <div class="context-row divider">
+              <span class="ctx-label">If you pay now</span>
+              <span class="ctx-val warn">€181.80 total — <span class="over">€31.80 over</span></span>
+            </div>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-dot"></div>
+            <div class="insight-text">
+              You've made <strong>4 unplanned purchases</strong> after midnight this month.
+            </div>
+          </div>
+
+          <div class="savings-tip">
+            <span class="tip-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9" stroke="#1a6644" stroke-width="1.8"/>
+                <path d="M12 7v5l3 2" stroke="#1a6644" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            ASOS usually restocks these items. Save for 48h and decide tomorrow.
+          </div>
+
+          <button class="btn-pause" onclick="showPaused(false)">Save cart, decide tomorrow</button>
+          <button class="btn-proceed" onclick="showPaused(true)">Continue with payment</button>
+
+        </div>
+      </div>
+
+      <!-- Paused / confirmed state -->
+      <div class="paused-state" id="paused-state">
+        <div class="paused-icon" id="paused-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+            <path d="M9 12l2 2 4-4" stroke="#1a9e70" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="9" stroke="#1a9e70" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <div class="paused-title" id="paused-title">Cart saved. Good call.</div>
+        <div class="paused-sub" id="paused-sub">
+          No pressure — you can come back to it later.
+        </div>
+        <button class="remind-btn" onclick="closeSheet()">Got it</button>
+        <button class="dismiss-btn" onclick="closeSheet()">Dismiss</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showPaused(anyway) {
+    document.getElementById('main-sheet').style.display = 'none';
+    var ps = document.getElementById('paused-state');
+    ps.style.display = 'block';
+
+    if (anyway) {
+      document.getElementById('paused-title').textContent = 'Payment sent.';
+      document.getElementById('paused-sub').textContent =
+        '€38.90 to ASOS. You can lower your clothing limit in SEB settings to get an earlier heads-up next time.';
+      document.getElementById('paused-icon').style.background = '#FFF3EE';
+      var svg = document.querySelector('#paused-icon svg');
+      svg.querySelector('path').setAttribute('stroke', '#E8600A');
+      svg.querySelector('circle').setAttribute('stroke', '#E8600A');
+    }
+  }
+
+  function closeSheet() {
+    var overlay = document.getElementById('overlay');
+    overlay.style.transition = 'opacity 0.25s ease';
+    overlay.style.opacity = '0';
+    setTimeout(function () {
+      overlay.style.display = 'none';
+      var bg = document.querySelector('.checkout-bg');
+      bg.style.transition = 'filter 0.3s ease, opacity 0.3s ease';
+      bg.style.filter = 'none';
+      bg.style.opacity = '1';
+      bg.style.pointerEvents = 'auto';
+      bg.style.userSelect = 'auto';
+    }, 260);
+  }
+</script>
+
+</body>
+</html>
