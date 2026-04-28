@@ -1,356 +1,630 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>SEB — Spending Pause</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SEB — Spending Pause</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --seb: #0C2340;
-      --seb-mid: #163352;
-      --seb-light: #EAF0F7;
-      --seb-accent: #00A878;
-      --seb-warn: #E8600A;
-      --seb-warn-bg: #FFF3EE;
-      --seb-warn-border: #FDDCC8;
-      --r: 16px;
-      --r-sm: 10px;
-    }
+:root {
+  --seb: #0C2340;
+  --seb-light: #EAF0F7;
+  --seb-accent: #00A878;
+  --seb-warn: #E8600A;
+  --seb-warn-bg: #FFF3EE;
+  --seb-warn-border: #FDDCC8;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --r: 16px;
+  --r-sm: 10px;
+}
 
-    html, body {
-      height: 100%;
-      background: #D8DCE4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'DM Sans', sans-serif;
-    }
+html, body {
+  height: 100%;
+  background: #D8DCE4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
 
-    .phone {
-      width: 375px;
-      min-height: 720px;
-      background: #F2F4F7;
-      border-radius: 40px;
-      overflow: hidden;
-      position: relative;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,0,0,0.12);
-    }
+.phone {
+  width: 375px;
+  min-height: 720px;
+  background: #F2F4F7;
+  border-radius: 40px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,0,0,0.12);
+}
 
-    /* ── Status bar ── */
-    .statusbar {
-      background: var(--seb);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 22px 0;
-      font-size: 12px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.9);
-    }
-    .statusbar-time { font-size: 14px; font-weight: 600; }
-    .statusbar-icons { display: flex; gap: 5px; align-items: center; }
+/* statusbar */
+.statusbar {
+  background: var(--seb);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 22px 0;
+  color: rgba(255,255,255,0.9);
+}
+.statusbar-time { font-size: 14px; font-weight: 600; }
+.statusbar-icons { display: flex; gap: 5px; align-items: center; }
 
-    /* ── Top bar ── */
-    .topbar {
-      background: var(--seb);
-      padding: 10px 20px 14px;
-      display: flex;
-      align-items: center;
-    }
-    .topbar-logo { color: #fff; font-size: 20px; font-weight: 700; letter-spacing: 0.05em; }
-    .topbar-account {
-      margin-left: auto;
-      text-align: right;
-    }
-    .topbar-name { color: rgba(255,255,255,0.6); font-size: 11px; }
-    .topbar-card { color: rgba(255,255,255,0.9); font-size: 12px; font-weight: 500; margin-top: 1px; }
+/* topbar */
+.topbar {
+  background: var(--seb);
+  padding: 10px 20px 14px;
+  display: flex;
+  align-items: center;
+}
+.topbar-logo { color: #fff; font-size: 20px; font-weight: 700; letter-spacing: 0.05em; }
+.topbar-account { margin-left: auto; text-align: right; }
+.topbar-name { color: rgba(255,255,255,0.6); font-size: 11px; }
+.topbar-card { color: rgba(255,255,255,0.9); font-size: 12px; font-weight: 500; margin-top: 1px; }
 
-    /* ── Checkout background ── */
-    .checkout-bg {
-      padding: 14px 14px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      filter: blur(2.5px);
-      opacity: 0.4;
-      pointer-events: none;
-      user-select: none;
-    }
+/* screens */
+.screen { display: none; padding-bottom: 70px; }
+.screen.active { display: block; }
 
-    .shop-header {
-      background: #fff;
-      border-radius: var(--r);
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .shop-logo {
-      width: 44px; height: 44px;
-      border-radius: 10px;
-      background: var(--seb-light);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-    }
-    .shop-name { font-size: 15px; font-weight: 600; color: #111; }
-    .shop-url { font-size: 11px; color: #999; margin-top: 2px; }
+/* checkout bg */
+.checkout-bg {
+  padding: 14px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  filter: blur(2.5px);
+  opacity: 0.4;
+  pointer-events: none;
+  user-select: none;
+}
+.shop-header {
+  background: #fff;
+  border-radius: var(--r);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.shop-logo {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: var(--seb-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.shop-name { font-size: 15px; font-weight: 600; color: #111; }
+.shop-url { font-size: 11px; color: #999; margin-top: 2px; }
+.cart-card { background: #fff; border-radius: var(--r); padding: 14px; }
+.cart-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 0; border-bottom: 0.5px solid #eee;
+}
+.cart-item:last-of-type { border-bottom: none; }
+.item-img {
+  width: 46px; height: 46px; border-radius: 8px;
+  background: #f5f5f5; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.item-name { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+.item-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+.item-price { margin-left: auto; font-size: 14px; font-weight: 600; color: #1a1a1a; }
+.total-row {
+  display: flex; justify-content: space-between;
+  padding: 12px 0 0; font-size: 15px; font-weight: 700; color: #111;
+}
+.pay-btn {
+  background: var(--seb); color: #fff; border: none;
+  border-radius: 12px; padding: 14px; width: 100%;
+  font-size: 15px; font-weight: 600; font-family: var(--font); margin-top: 10px;
+}
 
-    .cart-card {
-      background: #fff;
-      border-radius: var(--r);
-      padding: 14px;
-    }
-    .cart-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 9px 0;
-      border-bottom: 0.5px solid #eee;
-    }
-    .cart-item:last-of-type { border-bottom: none; }
-    .item-img {
-      width: 46px; height: 46px;
-      border-radius: 8px;
-      background: #f5f5f5;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-    .item-name { font-size: 13px; font-weight: 500; color: #1a1a1a; }
-    .item-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
-    .item-price { margin-left: auto; font-size: 14px; font-weight: 600; color: #1a1a1a; }
-    .total-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0 0;
-      font-size: 15px;
-      font-weight: 700;
-      color: #111;
-    }
-    .pay-btn {
-      background: var(--seb);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 14px;
-      width: 100%;
-      font-size: 15px;
-      font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
-      margin-top: 10px;
-    }
+/* overlay */
+.overlay {
+  position: absolute; inset: 0;
+  background: rgba(8,18,38,0.6);
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.overlay.fade-in { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* ── Overlay ── */
-    .overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(8, 18, 38, 0.6);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* sheet */
+.sheet {
+  background: #fff;
+  border-radius: 22px 22px 0 0;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 30px;
+}
+.sheet.slide-up { animation: slideUp 0.42s cubic-bezier(0.22,1,0.36,1); }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-    /* ── Bottom sheet ── */
-    .sheet {
-      background: #fff;
-      border-radius: 22px 22px 0 0;
-      width: 100%;
-      max-height: 92vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: calc(24px + env(safe-area-inset-bottom, 16px));
-      animation: slideUp 0.42s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to   { transform: translateY(0); }
-    }
+.pill {
+  width: 36px; height: 4px; background: #DEDEDE;
+  border-radius: 2px; margin: 12px auto 0;
+}
+.sheet-inner { padding: 0 18px; }
 
-    .pill {
-      width: 36px; height: 4px;
-      background: #DEDEDE;
-      border-radius: 2px;
-      margin: 12px auto 0;
-    }
+/* alert header */
+.alert-header { display: flex; align-items: flex-start; gap: 12px; padding: 18px 0 14px; }
+.alert-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--seb-warn-bg);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.alert-title { font-size: 16px; font-weight: 600; color: #111; line-height: 1.3; }
+.alert-title .amount { color: var(--seb-warn); }
+.alert-sub { font-size: 13px; color: #888; margin-top: 3px; line-height: 1.4; }
 
-    .sheet-inner { padding: 0 18px; }
+/* context strip */
+.context-strip {
+  background: var(--seb-warn-bg);
+  border: 1px solid var(--seb-warn-border);
+  border-radius: var(--r-sm); padding: 13px 14px; margin-bottom: 12px;
+}
+.context-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
+.context-row:first-child { padding-top: 0; }
+.context-row.divider {
+  border-top: 0.5px solid var(--seb-warn-border); margin-top: 6px; padding-top: 10px;
+}
+.ctx-label { font-size: 12px; color: #9a5528; }
+.ctx-val { font-size: 13px; font-weight: 600; color: #7a3b18; }
+.ctx-val .over { color: var(--seb-warn); }
 
-    /* alert header */
-    .alert-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 18px 0 14px;
-    }
-    .alert-icon {
-      width: 44px; height: 44px;
-      border-radius: 12px;
-      background: var(--seb-warn-bg);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .alert-title { font-size: 16px; font-weight: 600; color: #111; line-height: 1.3; }
-    .alert-title .amount { color: var(--seb-warn); }
-    .alert-sub { font-size: 13px; color: #888; margin-top: 3px; line-height: 1.4; }
+/* insight */
+.insight-card {
+  background: #EDF1F7; border: 1px solid #D6DEE9;
+  border-radius: var(--r-sm); padding: 11px 13px;
+  margin-bottom: 12px; display: flex; gap: 9px; align-items: flex-start;
+}
+.insight-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #7A92AA; flex-shrink: 0; margin-top: 5px;
+}
+.insight-text { font-size: 12px; color: #4A6070; line-height: 1.55; }
+.insight-text strong { font-weight: 600; color: #2E4A5E; }
 
-    /* context strip */
-    .context-strip {
-      background: var(--seb-warn-bg);
-      border: 1px solid var(--seb-warn-border);
-      border-radius: var(--r-sm);
-      padding: 13px 14px;
-      margin-bottom: 12px;
-    }
-    .context-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 5px 0;
-    }
-    .context-row:first-child { padding-top: 0; }
-    .context-row.divider {
-      border-top: 0.5px solid var(--seb-warn-border);
-      margin-top: 6px;
-      padding-top: 10px;
-    }
-    .ctx-label { font-size: 12px; color: #9a5528; }
-    .ctx-val { font-size: 13px; font-weight: 600; color: #7a3b18; }
-    .ctx-val.warn { font-size: 13px; font-weight: 600; color: #7a3b18; }
-    .ctx-val.warn .over { color: var(--seb-warn); }
+/* savings tip */
+.savings-tip {
+  background: #EBF8F3; border-radius: var(--r-sm);
+  padding: 12px 14px; margin-bottom: 18px;
+  font-size: 13px; color: #1a6644; line-height: 1.55;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.tip-icon { flex-shrink: 0; margin-top: 1px; }
 
-    /* insight */
-    .insight-card {
-      background: #EDF1F7;
-      border: 1px solid #D6DEE9;
-      border-radius: var(--r-sm);
-      padding: 11px 13px;
-      margin-bottom: 12px;
-      display: flex;
-      gap: 9px;
-      align-items: flex-start;
-    }
-    .insight-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #7A92AA;
-      flex-shrink: 0;
-      margin-top: 5px;
-    }
-    .insight-text { font-size: 12.5px; color: #4A6070; line-height: 1.55; }
-    .insight-text strong { font-weight: 600; color: #2E4A5E; }
+/* buttons */
+.btn-pause {
+  background: var(--seb); color: #fff; border: none;
+  border-radius: 12px; padding: 16px; width: 100%; min-height: 52px;
+  font-size: 15px; font-weight: 600; font-family: var(--font);
+  cursor: pointer; margin-bottom: 10px; display: block; transition: opacity 0.15s;
+}
+.btn-pause:active { opacity: 0.85; }
+.btn-proceed {
+  background: transparent; color: #999;
+  border: 1.5px solid #e8e8e8; border-radius: 12px;
+  padding: 15px; width: 100%; min-height: 52px;
+  font-size: 14px; font-weight: 500; font-family: var(--font);
+  cursor: pointer; display: block; transition: background 0.15s;
+}
+.btn-proceed:active { background: #f5f5f5; }
 
-    /* savings tip */
-    .savings-tip {
-      background: #EBF8F3;
-      border-radius: var(--r-sm);
-      padding: 12px 14px;
-      margin-bottom: 18px;
-      font-size: 13px;
-      color: #1a6644;
-      line-height: 1.55;
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-    .tip-icon { flex-shrink: 0; margin-top: 1px; }
+/* paused state */
+.paused-state { display: none; text-align: center; padding: 28px 20px 10px; }
+.paused-icon {
+  width: 64px; height: 64px; border-radius: 20px;
+  background: #EBF8F3;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+}
+.paused-title { font-size: 18px; font-weight: 600; color: #111; margin-bottom: 8px; }
+.paused-sub {
+  font-size: 14px; color: #777; line-height: 1.6; margin-bottom: 24px;
+  max-width: 300px; margin-left: auto; margin-right: auto;
+}
+.remind-btn {
+  background: var(--seb); color: #fff; border: none;
+  border-radius: 12px; padding: 14px; width: 100%;
+  font-size: 14px; font-weight: 600; font-family: var(--font);
+  cursor: pointer; margin-bottom: 10px; display: block;
+}
+.dismiss-btn {
+  background: transparent; color: #bbb; border: none;
+  font-size: 13px; font-family: var(--font);
+  cursor: pointer; padding: 6px; display: block; width: 100%;
+}
 
-    /* actions */
-    .btn-pause {
-      background: var(--seb);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 16px;
-      width: 100%;
-      min-height: 52px;
-      font-size: 15px;
-      font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      transition: opacity 0.15s;
-      margin-bottom: 10px;
-      display: block;
-    }
-    .btn-pause:active { opacity: 0.82; }
+/* bottom nav */
+.bottom-nav {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: #fff; border-top: 0.5px solid #E8ECF0;
+  display: flex; padding: 10px 0 14px; z-index: 10;
+}
+.nav-tab {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 4px; cursor: pointer;
+  padding: 4px 0; background: none; border: none; font-family: var(--font);
+}
+.nav-tab-label { font-size: 10px; font-weight: 500; color: #AABBC8; }
+.nav-tab.active .nav-tab-label { color: var(--seb); }
+.nav-tab svg { opacity: 0.3; }
+.nav-tab.active svg { opacity: 1; }
 
-    .btn-proceed {
-      background: transparent;
-      color: #999;
-      border: 1.5px solid #e8e8e8;
-      border-radius: 12px;
-      padding: 15px;
-      width: 100%;
-      min-height: 52px;
-      font-size: 14px;
-      font-weight: 500;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      transition: background 0.15s;
-      display: block;
-    }
-    .btn-proceed:active { background: #f5f5f5; }
+/* weekly screen */
+.weekly-wrap { padding: 18px 16px 0; }
+.week-verdict {
+  background: #0A7A52; border-radius: var(--r);
+  padding: 20px 18px; margin-bottom: 14px; color: #fff;
+}
+.week-verdict.over { background: var(--seb); }
+.week-verdict-label {
+  font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+}
+.week-verdict-heading { font-size: 22px; font-weight: 600; line-height: 1.2; margin-bottom: 4px; }
+.week-verdict-sub { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.4; }
+.week-verdict-badge {
+  display: inline-block; background: rgba(255,255,255,0.15);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); margin-top: 10px;
+}
 
-    /* paused state */
-    .paused-state {
-      display: none;
-      text-align: center;
-      padding: 28px 20px 10px;
-    }
-    .paused-icon {
-      width: 64px; height: 64px;
-      border-radius: 20px;
-      background: #EBF8F3;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px;
-    }
-    .paused-title { font-size: 18px; font-weight: 600; color: #111; margin-bottom: 8px; }
-    .paused-sub {
-      font-size: 14px;
-      color: #777;
-      line-height: 1.6;
-      margin-bottom: 24px;
-      max-width: 300px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .remind-btn {
-      background: var(--seb);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 14px;
-      width: 100%;
-      font-size: 14px;
-      font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      margin-bottom: 10px;
-      display: block;
-    }
-    .dismiss-btn {
-      background: transparent;
-      color: #bbb;
-      border: none;
-      font-size: 13px;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      padding: 6px;
-      display: block;
-      width: 100%;
-    }
+.week-section-title {
+  font-size: 11px; font-weight: 600; color: #AABBC8;
+  text-transform: uppercase; letter-spacing: 0.08em; margin: 16px 0 8px;
+}
+.stat-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px; margin-bottom: 14px;
+}
+.stat-card {
+  background: #fff; border-radius: var(--r-sm);
+  border: 0.5px solid #E8ECF2; padding: 13px 14px;
+}
+.stat-label { font-size: 11px; color: #AABBC8; margin-bottom: 4px; }
+.stat-val { font-size: 20px; font-weight: 600; color: #0C2340; line-height: 1; }
+.stat-val.good { color: #0A7A52; }
+.stat-val.warn { color: var(--seb-warn); }
+.stat-sub { font-size: 11px; color: #AABBC8; margin-top: 3px; }
 
-    /* desktop centering note */
-    @media (max-width: 420px) {
-      html, body { align-items: flex-start; background: #fff; }
-      .phone { border-radius: 0; box-shadow: none; min-height: 100vh; width: 100%; }
-    }
-  </style>
+.win-card {
+  background: #EBF8F3; border: 1px solid #C0E8D8;
+  border-radius: var(--r-sm); padding: 14px;
+  margin-bottom: 10px; display: flex; gap: 12px; align-items: flex-start;
+}
+.win-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: #C8F0E0; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 16px;
+}
+.win-title { font-size: 13px; font-weight: 600; color: #0A5C3A; margin-bottom: 2px; }
+.win-sub { font-size: 12px; color: #2A8A5E; line-height: 1.4; }
+
+.save-prompt-card {
+  background: #fff; border: 1px solid #E8ECF2;
+  border-radius: var(--r); padding: 18px; margin-bottom: 10px;
+  transition: opacity 0.2s ease;
+}
+.save-prompt-title { font-size: 15px; font-weight: 600; color: #0C2340; margin-bottom: 4px; }
+.save-prompt-sub { font-size: 13px; color: #7A8A99; line-height: 1.5; margin-bottom: 16px; }
+.save-amount-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.save-chip {
+  flex: 1; background: var(--seb-light);
+  border: 1.5px solid transparent; border-radius: 10px;
+  padding: 10px 6px; text-align: center;
+  font-size: 14px; font-weight: 600; color: var(--seb);
+  cursor: pointer; transition: all 0.15s; font-family: var(--font);
+}
+.save-chip.selected { background: var(--seb); color: #fff; border-color: var(--seb); }
+.btn-save-now {
+  background: var(--seb-accent); color: #fff; border: none;
+  border-radius: 12px; padding: 14px; width: 100%;
+  font-size: 14px; font-weight: 600; font-family: var(--font);
+  cursor: pointer; min-height: 50px; transition: opacity 0.15s; display: block;
+}
+.btn-save-now:active { opacity: 0.85; }
+.btn-skip-save {
+  background: transparent; border: none; color: #AABBC8;
+  font-size: 13px; font-family: var(--font);
+  cursor: pointer; width: 100%; padding: 10px; margin-top: 2px; display: block;
+}
+.save-success { display: none; text-align: center; padding: 10px 0 4px; }
+.save-success-icon { font-size: 32px; margin-bottom: 8px; }
+.save-success-title { font-size: 15px; font-weight: 600; color: #0A5C3A; margin-bottom: 4px; }
+.save-success-sub { font-size: 13px; color: #2A8A5E; }
+
+.intention-card {
+  background: #fff; border: 1px solid #E8ECF2;
+  border-radius: var(--r); padding: 16px 18px; margin-bottom: 14px;
+}
+.intention-title { font-size: 13px; font-weight: 600; color: #0C2340; margin-bottom: 10px; }
+.intention-options { display: flex; flex-direction: column; gap: 8px; }
+.intention-opt {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  border: 1px solid #E8ECF2; cursor: pointer;
+  font-size: 13px; color: #3A4A5A; background: #FAFBFC;
+  transition: all 0.15s; font-family: var(--font); text-align: left; width: 100%;
+  position: relative;
+}
+.intention-opt.suggested {
+  background: var(--seb-light);
+  border-color: #A8C4D8;
+  color: var(--seb);
+}
+.intention-opt-icon { font-size: 16px; flex-shrink: 0; }
+.suggested-tag {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--seb);
+  background: rgba(12,35,64,0.1);
+  border-radius: 20px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+
+/* goal tracker */
+.goal-card {
+  background: var(--seb);
+  border-radius: var(--r);
+  padding: 18px;
+  margin-bottom: 14px;
+  color: #fff;
+}
+.goal-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.goal-emoji {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.goal-name { font-size: 15px; font-weight: 600; line-height: 1.2; }
+.goal-sub { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+.goal-progress-bg {
+  background: rgba(255,255,255,0.15);
+  border-radius: 99px;
+  height: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.goal-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: #00D49A;
+  transition: width 1s cubic-bezier(0.22,1,0.36,1);
+}
+.goal-progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.goal-saved { font-size: 18px; font-weight: 700; }
+.goal-target { font-size: 12px; color: rgba(255,255,255,0.5); }
+.goal-weeks {
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 0.5px solid rgba(255,255,255,0.12);
+}
+.goal-weeks span { color: #00D49A; font-weight: 600; }
+.goal-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.goal-tab {
+  flex: 1;
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  padding: 9px 6px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  cursor: pointer;
+  font-family: var(--font);
+  font-weight: 500;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.goal-tab.active {
+  background: #fff;
+  border-color: #fff;
+  color: var(--seb);
+}
+.goal-tab-icon { font-size: 16px; }
+
+/* ── Streak screen ── */
+.streak-wrap { padding: 18px 16px 0; }
+
+.streak-hero {
+  background: var(--seb);
+  border-radius: var(--r);
+  padding: 22px 18px 18px;
+  margin-bottom: 14px;
+  color: #fff;
+  text-align: center;
+}
+.streak-arc-wrap { position: relative; width: 120px; height: 70px; margin: 0 auto 14px; }
+.streak-arc-wrap svg { overflow: visible; }
+.streak-number {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+.streak-unit {
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 2px;
+  letter-spacing: 0.05em;
+}
+.streak-label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.streak-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.4;
+}
+.streak-week-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.streak-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+}
+.streak-dot.done {
+  background: #00D49A;
+  color: #fff;
+}
+.streak-dot.today {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.5);
+}
+
+/* milestone row */
+.milestone-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.milestone-item {
+  background: #fff;
+  border-radius: var(--r-sm);
+  border: 1px solid #E8ECF2;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.milestone-item.unlocked { border-color: #C0E8D8; background: #EBF8F3; }
+.milestone-item.next { border-color: #D4DCE9; background: var(--seb-light); }
+.milestone-icon {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: #F0F4F8;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.milestone-item.unlocked .milestone-icon { background: #C8F0E0; }
+.milestone-item.next .milestone-icon { background: #D4E4F0; }
+.milestone-name { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+.milestone-item.unlocked .milestone-name { color: #0A5C3A; }
+.milestone-item.next .milestone-name { color: var(--seb); }
+.milestone-desc { font-size: 11px; color: #AABBC8; margin-top: 2px; line-height: 1.4; }
+.milestone-item.unlocked .milestone-desc { color: #2A8A5E; }
+.milestone-item.next .milestone-desc { color: #5A7A9A; }
+.milestone-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.badge-done { background: #C8F0E0; color: #0A5C3A; }
+.badge-next { background: var(--seb-light); color: var(--seb); }
+.badge-locked { background: #F0F4F8; color: #AABBC8; }
+
+/* moments feed */
+.moment-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 0.5px solid #E8ECF2;
+}
+.moment-item:last-child { border-bottom: none; }
+.moment-dot-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+}
+.moment-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--seb-accent);
+  flex-shrink: 0;
+}
+.moment-line {
+  width: 1px;
+  flex: 1;
+  background: #E8ECF2;
+  margin-top: 4px;
+  min-height: 20px;
+}
+.moment-item:last-child .moment-line { display: none; }
+.moment-text { font-size: 13px; color: #3A4A5A; line-height: 1.5; }
+.moment-text strong { font-weight: 600; color: #0C2340; }
+.moment-time { font-size: 11px; color: #AABBC8; margin-top: 2px; }
+
+/* reward unlock card */
+.reward-card {
+  background: linear-gradient(135deg, #0A7A52 0%, #0C5A3A 100%);
+  border-radius: var(--r);
+  padding: 18px;
+  margin-bottom: 14px;
+  color: #fff;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.reward-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.reward-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.reward-sub { font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.4; }
+.reward-claim {
+  background: #fff;
+  color: #0A5C3A;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+@media (max-width: 420px) {
+  html, body { align-items: flex-start; background: #fff; }
+  .phone { border-radius: 0; box-shadow: none; min-height: 100vh; width: 100%; }
+}
+</style>
 </head>
 <body>
 
@@ -386,152 +660,493 @@
     </div>
   </div>
 
-  <!-- Blurred checkout -->
-  <div class="checkout-bg">
-    <div class="shop-header">
-      <div class="shop-logo">🛍</div>
-      <div>
-        <div class="shop-name">ASOS</div>
-        <div class="shop-url">asos.com · Secure checkout</div>
+  <!-- Screen 1: Checkout -->
+  <div class="screen active" id="screen-checkout">
+
+    <div class="checkout-bg">
+      <div class="shop-header">
+        <div class="shop-logo">&#128717;</div>
+        <div>
+          <div class="shop-name">ASOS</div>
+          <div class="shop-url">asos.com &middot; Secure checkout</div>
+        </div>
+      </div>
+      <div class="cart-card">
+        <div class="cart-item">
+          <div class="item-img">&#128085;</div>
+          <div>
+            <div class="item-name">Oversized graphic tee</div>
+            <div class="item-sub">Size M &middot; Black</div>
+          </div>
+          <div class="item-price">&euro;13.99</div>
+        </div>
+        <div class="cart-item">
+          <div class="item-img">&#129346;</div>
+          <div>
+            <div class="item-name">Carhartt cap</div>
+            <div class="item-sub">One size &middot; Beige</div>
+          </div>
+          <div class="item-price">&euro;24.91</div>
+        </div>
+        <div class="total-row">
+          <span>Total</span>
+          <span>&euro;38.90</span>
+        </div>
+        <button class="pay-btn">Pay &euro;38.90</button>
       </div>
     </div>
-    <div class="cart-card">
-      <div class="cart-item">
-        <div class="item-img">👕</div>
-        <div>
-          <div class="item-name">Oversized graphic tee</div>
-          <div class="item-sub">Size M · Black</div>
+
+    <!-- Overlay -->
+    <div class="overlay fade-in" id="overlay">
+      <div class="sheet slide-up">
+        <div class="pill"></div>
+
+        <div id="main-sheet">
+          <div class="sheet-inner">
+
+            <div class="alert-header">
+              <div class="alert-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 9v4M12 16.5v.5" stroke="#E8600A" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="#E8600A" stroke-width="1.8" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="alert-title">Before you pay <span class="amount">&euro;38.90</span></div>
+                <div class="alert-sub">SEB noticed a spending pattern.</div>
+              </div>
+            </div>
+
+            <div class="context-strip">
+              <div class="context-row">
+                <span class="ctx-label">Clothing this month</span>
+                <span class="ctx-val">&euro;142.90 spent</span>
+              </div>
+              <div class="context-row">
+                <span class="ctx-label">Monthly clothing limit</span>
+                <span class="ctx-val">&euro;150.00 set</span>
+              </div>
+              <div class="context-row divider">
+                <span class="ctx-label">If you pay now</span>
+                <span class="ctx-val">&euro;181.80 total &mdash; <span class="over">&euro;31.80 over</span></span>
+              </div>
+            </div>
+
+            <div class="insight-card">
+              <div class="insight-dot"></div>
+              <div class="insight-text">
+                You've made <strong>4 unplanned purchases</strong> after midnight this month.
+              </div>
+            </div>
+
+            <div class="savings-tip">
+              <span class="tip-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="#1a6644" stroke-width="1.8"/>
+                  <path d="M12 7v5l3 2" stroke="#1a6644" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              ASOS usually restocks these items. Save for 48h and decide tomorrow.
+            </div>
+
+            <button class="btn-pause" onclick="showPaused(false)">Save cart, decide tomorrow</button>
+            <button class="btn-proceed" onclick="showPaused(true)">Continue with payment</button>
+
+          </div>
         </div>
-        <div class="item-price">€13.99</div>
-      </div>
-      <div class="cart-item">
-        <div class="item-img">🧢</div>
-        <div>
-          <div class="item-name">Carhartt cap</div>
-          <div class="item-sub">One size · Beige</div>
+
+        <div class="paused-state" id="paused-state">
+          <div class="paused-icon" id="paused-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+              <path d="M9 12l2 2 4-4" stroke="#1a9e70" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="12" r="9" stroke="#1a9e70" stroke-width="1.8"/>
+            </svg>
+          </div>
+          <div class="paused-title" id="paused-title">Cart saved. Good call.</div>
+          <div class="paused-sub" id="paused-sub">No pressure &mdash; you can come back to it later.</div>
+          <button class="remind-btn" onclick="closeSheet()">Got it</button>
+          <button class="dismiss-btn" onclick="closeSheet()">Dismiss</button>
         </div>
-        <div class="item-price">€24.91</div>
+
       </div>
-      <div class="total-row">
-        <span>Total</span>
-        <span>€38.90</span>
+    </div>
+
+  </div>
+
+  <!-- Screen 2: Weekly Reset -->
+  <div class="screen" id="screen-weekly">
+    <div class="weekly-wrap">
+
+      <div class="week-verdict good">
+        <div class="week-verdict-label">Week of 14&ndash;20 Apr</div>
+        <div class="week-verdict-heading">Good week, Matas.</div>
+        <div class="week-verdict-sub">You stayed under budget in 3 out of 4 categories.</div>
+        <div class="week-verdict-badge">&euro;47 under your weekly plan</div>
       </div>
-      <button class="pay-btn">Pay €38.90</button>
+
+      <div class="week-section-title">This week</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total spent</div>
+          <div class="stat-val">&euro;183</div>
+          <div class="stat-sub">plan was &euro;230</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Saved vs plan</div>
+          <div class="stat-val good">&euro;47</div>
+          <div class="stat-sub">best week this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Purchases paused</div>
+          <div class="stat-val">2</div>
+          <div class="stat-sub">&asymp; &euro;62 not spent</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Over-limit days</div>
+          <div class="stat-val warn">1</div>
+          <div class="stat-sub">Tuesday night</div>
+        </div>
+      </div>
+
+      <div class="week-section-title">Your win this week</div>
+      <div class="win-card">
+        <div class="win-icon">&#9208;</div>
+        <div>
+          <div class="win-title">You paused 2 purchases</div>
+          <div class="win-sub">Those 2 pauses kept ~&euro;62 in your account. That's not nothing.</div>
+        </div>
+      </div>
+
+      <div class="save-prompt-card" id="save-prompt-card">
+        <div class="save-prompt-title">Want to lock in the win?</div>
+        <div class="save-prompt-sub">You came in &euro;47 under plan. Move some of it to savings before the week resets &mdash; even a small amount adds up.</div>
+        <div class="save-amount-row">
+          <button class="save-chip" onclick="selectAmount(this,10)">&euro;10</button>
+          <button class="save-chip" onclick="selectAmount(this,20)">&euro;20</button>
+          <button class="save-chip selected" onclick="selectAmount(this,30)">&euro;30</button>
+          <button class="save-chip" onclick="selectAmount(this,47)">&euro;47</button>
+        </div>
+        <button class="btn-save-now" id="btn-save-now" onclick="confirmSave()">Move &euro;30 to savings</button>
+        <button class="btn-skip-save" onclick="skipSave()">Not this week</button>
+        <div class="save-success" id="save-success">
+          <div class="save-success-icon">&#9989;</div>
+          <div class="save-success-title" id="save-success-title">&euro;30 moved to savings.</div>
+          <div class="save-success-sub">Small wins compound. See you next week.</div>
+        </div>
+      </div>
+
+      <div class="intention-card" id="intention-card">
+        <div class="intention-title">One intention for next week</div>
+        <div style="font-size:11px;color:#AABBC8;margin-bottom:10px;margin-top:-6px;">Based on your Tuesday night &mdash; SEB suggests starting here</div>
+        <div class="intention-options">
+          <button class="intention-opt suggested" onclick="pickIntention(this)">
+            <span class="intention-opt-icon">🌙</span>
+            No purchases after midnight
+            <span class="suggested-tag">suggested</span>
+          </button>
+          <button class="intention-opt" onclick="pickIntention(this)">
+            <span class="intention-opt-icon">⏳</span>
+            Wait 24h before any unplanned buy
+          </button>
+          <button class="intention-opt" onclick="pickIntention(this)">
+            <span class="intention-opt-icon">🎯</span>
+            Stay under &euro;200 total spend
+          </button>
+        </div>
+      </div>
+
+      <!-- What you're building -->
+      <div class="week-section-title">What you're building</div>
+
+      <!-- Goal tabs -->
+      <div class="goal-tabs">
+        <button class="goal-tab active" onclick="switchGoal(this,'japan')">
+          <span class="goal-tab-icon">✈️</span>Japan trip
+        </button>
+        <button class="goal-tab" onclick="switchGoal(this,'sony')">
+          <span class="goal-tab-icon">📷</span>Sony camera
+        </button>
+        <button class="goal-tab" onclick="switchGoal(this,'flat')">
+          <span class="goal-tab-icon">🏠</span>Move out
+        </button>
+      </div>
+
+      <!-- Goal card -->
+      <div class="goal-card" id="goal-card">
+        <div class="goal-card-top">
+          <div class="goal-emoji" id="goal-emoji">✈️</div>
+          <div>
+            <div class="goal-name" id="goal-name">Tokyo &amp; Kyoto</div>
+            <div class="goal-sub" id="goal-sub">Target &euro;1,200 &middot; Summer 2026</div>
+          </div>
+        </div>
+        <div class="goal-progress-bg">
+          <div class="goal-progress-fill" id="goal-fill" style="width:54%"></div>
+        </div>
+        <div class="goal-progress-row">
+          <div class="goal-saved" id="goal-saved">&euro;648 saved</div>
+          <div class="goal-target" id="goal-target">&euro;1,200 goal</div>
+        </div>
+        <div class="goal-weeks" id="goal-weeks">
+          At &euro;30/week you'll hit this in <span>~9 weeks</span>. You're on track.
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- Screen 3: Streak & Rewards -->
+  <div class="screen" id="screen-streak">
+    <div class="streak-wrap">
+
+      <div class="streak-hero">
+        <div class="streak-arc-wrap">
+          <svg width="120" height="70" viewBox="0 0 120 70">
+            <path d="M10 65 A55 55 0 0 1 110 65" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="8" stroke-linecap="round"/>
+            <path d="M10 65 A55 55 0 0 1 110 65" fill="none" stroke="#00D49A" stroke-width="8" stroke-linecap="round" stroke-dasharray="173" stroke-dashoffset="45"/>
+          </svg>
+          <div class="streak-number">4</div>
+        </div>
+        <div class="streak-unit">WEEK STREAK</div>
+        <div class="streak-label" style="margin-top:10px">You're on a roll.</div>
+        <div class="streak-sub">4 weeks under your spending plan in a row.</div>
+        <div class="streak-week-dots">
+          <div class="streak-dot done">W1</div>
+          <div class="streak-dot done">W2</div>
+          <div class="streak-dot done">W3</div>
+          <div class="streak-dot done">W4</div>
+          <div class="streak-dot today">W5</div>
+          <div class="streak-dot">W6</div>
+        </div>
+      </div>
+
+      <div class="reward-card" id="reward-card">
+        <div>
+          <div class="reward-title">4-week streak — rate unlocked</div>
+          <div class="reward-sub">Your savings rate is boosted from 1.25% to 2%. Keep your streak to hold onto it &mdash; it drops back if you break it.</div>
+          <button class="reward-claim" onclick="claimReward()">Nice, thanks</button>
+        </div>
+        <div class="reward-icon">🎁</div>
+      </div>
+
+      <div class="week-section-title">Milestones</div>
+      <div class="milestone-list">
+        <div class="milestone-item unlocked">
+          <div class="milestone-icon">⏸</div>
+          <div>
+            <div class="milestone-name">First pause</div>
+            <div class="milestone-desc">You paused your first purchase before paying.</div>
+          </div>
+          <div class="milestone-badge badge-done">Done</div>
+        </div>
+        <div class="milestone-item unlocked">
+          <div class="milestone-icon">📅</div>
+          <div>
+            <div class="milestone-name">2-week streak</div>
+            <div class="milestone-desc">Stayed under plan 2 weeks in a row.</div>
+          </div>
+          <div class="milestone-badge badge-done">Done</div>
+        </div>
+        <div class="milestone-item unlocked">
+          <div class="milestone-icon">🏆</div>
+          <div>
+            <div class="milestone-name">4-week streak</div>
+            <div class="milestone-desc">Savings rate boosted to 2%. Maintain your streak to keep it.</div>
+          </div>
+          <div class="milestone-badge badge-done">Done</div>
+        </div>
+        <div class="milestone-item next">
+          <div class="milestone-icon">⭐</div>
+          <div>
+            <div class="milestone-name">8-week streak &mdash; max rate</div>
+            <div class="milestone-desc">Rate increases to 2.5% &mdash; the maximum boost. Keep your streak to hold it.</div>
+          </div>
+          <div class="milestone-badge badge-next">4 weeks away</div>
+        </div>
+        <div class="milestone-item">
+          <div class="milestone-icon">🔒</div>
+          <div>
+            <div class="milestone-name">12-week streak</div>
+            <div class="milestone-desc">Rate stays at 2.5% + priority customer support &amp; early access to new SEB features.</div>
+          </div>
+          <div class="milestone-badge badge-locked">Locked</div>
+        </div>
+      </div>
+
+      <div class="week-section-title">Your moments</div>
+      <div style="background:#fff;border-radius:var(--r);border:1px solid #E8ECF2;padding:14px 16px;margin-bottom:14px;">
+        <div class="moment-item">
+          <div class="moment-dot-wrap"><div class="moment-dot"></div><div class="moment-line"></div></div>
+          <div>
+            <div class="moment-text">You paused an ASOS order for <strong>&euro;38.90</strong>. That money is still in your account.</div>
+            <div class="moment-time">2 days ago</div>
+          </div>
+        </div>
+        <div class="moment-item">
+          <div class="moment-dot-wrap"><div class="moment-dot"></div><div class="moment-line"></div></div>
+          <div>
+            <div class="moment-text">Week 4 complete. <strong>&euro;47 under plan</strong> &mdash; your best week this month.</div>
+            <div class="moment-time">5 days ago</div>
+          </div>
+        </div>
+        <div class="moment-item">
+          <div class="moment-dot-wrap"><div class="moment-dot"></div><div class="moment-line"></div></div>
+          <div>
+            <div class="moment-text">You moved <strong>&euro;30 to savings</strong>. It's now part of your Japan fund.</div>
+            <div class="moment-time">5 days ago</div>
+          </div>
+        </div>
+        <div class="moment-item">
+          <div class="moment-dot-wrap"><div class="moment-dot"></div><div class="moment-line"></div></div>
+          <div>
+            <div class="moment-text">Paused a &euro;64 Zara order after midnight. <strong>Good call.</strong></div>
+            <div class="moment-time">12 days ago</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- SEB Overlay -->
-  <div class="overlay" id="overlay">
-    <div class="sheet">
-      <div class="pill"></div>
-
-      <!-- Main alert view -->
-      <div id="main-sheet">
-        <div class="sheet-inner">
-
-          <div class="alert-header">
-            <div class="alert-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path d="M12 9v4M12 16.5v.5" stroke="#E8600A" stroke-width="2" stroke-linecap="round"/>
-                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="#E8600A" stroke-width="1.8" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div>
-              <div class="alert-title">Before you pay <span class="amount">€38.90</span></div>
-              <div class="alert-sub">SEB noticed a spending pattern.</div>
-            </div>
-          </div>
-
-          <div class="context-strip">
-            <div class="context-row">
-              <span class="ctx-label">Clothing this month</span>
-              <span class="ctx-val">€142.90 spent</span>
-            </div>
-            <div class="context-row">
-              <span class="ctx-label">Monthly clothing limit</span>
-              <span class="ctx-val">€150.00 set</span>
-            </div>
-            <div class="context-row divider">
-              <span class="ctx-label">If you pay now</span>
-              <span class="ctx-val warn">€181.80 total — <span class="over">€31.80 over</span></span>
-            </div>
-          </div>
-
-          <div class="insight-card">
-            <div class="insight-dot"></div>
-            <div class="insight-text">
-              You've made <strong>4 unplanned purchases</strong> after midnight this month.
-            </div>
-          </div>
-
-          <div class="savings-tip">
-            <span class="tip-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="9" stroke="#1a6644" stroke-width="1.8"/>
-                <path d="M12 7v5l3 2" stroke="#1a6644" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-            ASOS usually restocks these items. Save for 48h and decide tomorrow.
-          </div>
-
-          <button class="btn-pause" onclick="showPaused(false)">Save cart, decide tomorrow</button>
-          <button class="btn-proceed" onclick="showPaused(true)">Continue with payment</button>
-
-        </div>
-      </div>
-
-      <!-- Paused / confirmed state -->
-      <div class="paused-state" id="paused-state">
-        <div class="paused-icon" id="paused-icon">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-            <path d="M9 12l2 2 4-4" stroke="#1a9e70" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="12" cy="12" r="9" stroke="#1a9e70" stroke-width="1.8"/>
-          </svg>
-        </div>
-        <div class="paused-title" id="paused-title">Cart saved. Good call.</div>
-        <div class="paused-sub" id="paused-sub">
-          No pressure — you can come back to it later.
-        </div>
-        <button class="remind-btn" onclick="closeSheet()">Got it</button>
-        <button class="dismiss-btn" onclick="closeSheet()">Dismiss</button>
-      </div>
-
-    </div>
+  <div class="bottom-nav">
+    <button class="nav-tab active" id="tab-checkout" onclick="switchTab('checkout')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#0C2340" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#0C2340" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span class="nav-tab-label">Checkout</span>
+    </button>
+    <button class="nav-tab" id="tab-weekly" onclick="switchTab('weekly')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="4" width="18" height="18" rx="2" stroke="#0C2340" stroke-width="1.8"/>
+        <path d="M16 2v4M8 2v4M3 10h18" stroke="#0C2340" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" stroke="#0C2340" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="nav-tab-label">Weekly reset</span>
+    </button>
+    <button class="nav-tab" id="tab-streak" onclick="switchTab('streak')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C12 2 7 8 7 13a5 5 0 0010 0c0-5-5-11-5-11z" stroke="#0C2340" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M12 13v-3" stroke="#0C2340" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span class="nav-tab-label">Streaks</span>
+    </button>
   </div>
 
 </div>
 
 <script>
-  function showPaused(anyway) {
-    document.getElementById('main-sheet').style.display = 'none';
-    var ps = document.getElementById('paused-state');
-    ps.style.display = 'block';
+var goals = {
+  japan: { emoji: '✈️', name: 'Tokyo &amp; Kyoto', sub: 'Target &euro;1,200 &middot; Summer 2026', saved: '&euro;648 saved', target: '&euro;1,200 goal', pct: 54, weeks: 'At &euro;30/week you\'ll hit this in <span>~9 weeks</span>. You\'re on track.' },
+  sony:  { emoji: '📷', name: 'Sony ZV-E10', sub: 'Target &euro;650 &middot; No deadline', saved: '&euro;210 saved', target: '&euro;650 goal', pct: 32, weeks: 'At &euro;30/week you\'ll hit this in <span>~15 weeks</span>. Keep going.' },
+  flat:  { emoji: '🏠', name: 'Move out fund', sub: 'Target &euro;3,000 &middot; End of 2027', saved: '&euro;420 saved', target: '&euro;3,000 goal', pct: 14, weeks: 'At &euro;30/week you\'ll hit this in <span>~86 weeks</span>. Consider increasing your weekly save.' }
+};
 
-    if (anyway) {
-      document.getElementById('paused-title').textContent = 'Payment sent.';
-      document.getElementById('paused-sub').textContent =
-        '€38.90 to ASOS. You can lower your clothing limit in SEB settings to get an earlier heads-up next time.';
-      document.getElementById('paused-icon').style.background = '#FFF3EE';
-      var svg = document.querySelector('#paused-icon svg');
-      svg.querySelector('path').setAttribute('stroke', '#E8600A');
-      svg.querySelector('circle').setAttribute('stroke', '#E8600A');
-    }
-  }
+function switchGoal(el, key) {
+  var tabs = document.querySelectorAll('.goal-tab');
+  for (var i = 0; i < tabs.length; i++) { tabs[i].classList.remove('active'); }
+  el.classList.add('active');
+  var g = goals[key];
+  document.getElementById('goal-emoji').innerHTML = g.emoji;
+  document.getElementById('goal-name').innerHTML = g.name;
+  document.getElementById('goal-sub').innerHTML = g.sub;
+  document.getElementById('goal-saved').innerHTML = g.saved;
+  document.getElementById('goal-target').innerHTML = g.target;
+  document.getElementById('goal-weeks').innerHTML = 'At \u20AC30/week you\'ll hit this in ' + g.weeks.replace(/.*in /, '');
+  var fill = document.getElementById('goal-fill');
+  fill.style.width = '0%';
+  setTimeout(function() { fill.style.width = g.pct + '%'; }, 50);
+}
 
-  function closeSheet() {
-    var overlay = document.getElementById('overlay');
-    overlay.style.transition = 'opacity 0.25s ease';
-    overlay.style.opacity = '0';
-    setTimeout(function () {
-      overlay.style.display = 'none';
-      var bg = document.querySelector('.checkout-bg');
-      bg.style.transition = 'filter 0.3s ease, opacity 0.3s ease';
-      bg.style.filter = 'none';
-      bg.style.opacity = '1';
-      bg.style.pointerEvents = 'auto';
-      bg.style.userSelect = 'auto';
-    }, 260);
+
+
+function showPaused(anyway) {
+  document.getElementById('main-sheet').style.display = 'none';
+  var ps = document.getElementById('paused-state');
+  ps.style.display = 'block';
+  if (anyway) {
+    document.getElementById('paused-title').textContent = 'Payment sent.';
+    document.getElementById('paused-sub').textContent = '\u20AC38.90 to ASOS. You can lower your clothing limit in SEB settings to get an earlier heads-up next time.';
+    document.getElementById('paused-icon').style.background = '#FFF3EE';
+    var svgEl = document.querySelector('#paused-icon svg');
+    svgEl.querySelector('path').setAttribute('stroke', '#E8600A');
+    svgEl.querySelector('circle').setAttribute('stroke', '#E8600A');
   }
+}
+
+function closeSheet() {
+  var overlay = document.getElementById('overlay');
+  overlay.style.transition = 'opacity 0.25s ease';
+  overlay.style.opacity = '0';
+  setTimeout(function() {
+    overlay.style.display = 'none';
+    var bg = document.querySelector('.checkout-bg');
+    bg.style.transition = 'filter 0.3s ease, opacity 0.3s ease';
+    bg.style.filter = 'none';
+    bg.style.opacity = '1';
+    bg.style.pointerEvents = 'auto';
+    bg.style.userSelect = 'auto';
+  }, 260);
+}
+
+function switchTab(tab) {
+  document.getElementById('screen-checkout').classList.toggle('active', tab === 'checkout');
+  document.getElementById('screen-weekly').classList.toggle('active', tab === 'weekly');
+  document.getElementById('screen-streak').classList.toggle('active', tab === 'streak');
+  document.getElementById('tab-checkout').classList.toggle('active', tab === 'checkout');
+  document.getElementById('tab-weekly').classList.toggle('active', tab === 'weekly');
+  document.getElementById('tab-streak').classList.toggle('active', tab === 'streak');
+}
+
+function claimReward() {
+  var card = document.getElementById('reward-card');
+  card.style.transition = 'opacity 0.3s ease';
+  card.style.opacity = '0';
+  setTimeout(function() { card.style.display = 'none'; }, 300);
+}
+
+function selectAmount(el, amount) {
+  selectedAmount = amount;
+  var chips = document.querySelectorAll('.save-chip');
+  for (var i = 0; i < chips.length; i++) { chips[i].classList.remove('selected'); }
+  el.classList.add('selected');
+  document.getElementById('btn-save-now').textContent = 'Move \u20AC' + amount + ' to savings';
+}
+
+function confirmSave() {
+  var card = document.getElementById('save-prompt-card');
+  var els = card.querySelectorAll('.save-prompt-title, .save-prompt-sub, .save-amount-row, #btn-save-now, .btn-skip-save');
+  for (var i = 0; i < els.length; i++) { els[i].style.display = 'none'; }
+  document.getElementById('save-success-title').textContent = '\u20AC' + selectedAmount + ' moved to savings.';
+  document.getElementById('save-success').style.display = 'block';
+}
+
+function skipSave() {
+  var card = document.getElementById('save-prompt-card');
+  card.style.opacity = '0';
+  setTimeout(function() { card.style.display = 'none'; }, 200);
+}
+
+function pickIntention(el) {
+  var opts = document.querySelectorAll('.intention-opt');
+  for (var i = 0; i < opts.length; i++) {
+    opts[i].style.background = '#FAFBFC';
+    opts[i].style.borderColor = '#E8ECF2';
+    opts[i].style.color = '#3A4A5A';
+    opts[i].style.fontWeight = '400';
+  }
+  el.style.background = '#EAF0F7';
+  el.style.borderColor = '#A8C4D8';
+  el.style.color = '#0C2340';
+  el.style.fontWeight = '600';
+  setTimeout(function() {
+    document.getElementById('intention-card').innerHTML =
+      '<div style="text-align:center;padding:6px 0 2px">' +
+      '<div style="font-size:28px;margin-bottom:8px">&#9989;</div>' +
+      '<div style="font-size:14px;font-weight:600;color:#0C2340;margin-bottom:4px">Intention set.</div>' +
+      '<div style="font-size:12px;color:#7A8A99;line-height:1.5">SEB will check in with you next Sunday.</div>' +
+      '</div>';
+  }, 300);
+}
 </script>
 
 </body>
